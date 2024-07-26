@@ -55706,8 +55706,8 @@ Body:
     Script: |
       getgroupitem(IG_2017_GSTAR_COSTUMEBOX);
   - Id: 17920
-    AegisName: Zero_Merchant_Bell_Box
-    Name: Tool Dealer Bell Box
+    AegisName: Merchant_Bell_Box
+    Name: Merchant Bell Box
     Type: Cash
     Flags:
       Container: true
@@ -55722,8 +55722,8 @@ Body:
     Script: |
       getgroupitem(IG_ZERO_MERCHANT_BELL_BOX);
   - Id: 17921
-    AegisName: Zero_Kafra_Bell_Box
-    Name: Kafra Storage Bell Box
+    AegisName: Kafra_Bell_Box
+    Name: Kafra Bell Box
     Type: Cash
     Flags:
       Container: true
@@ -61309,7 +61309,7 @@ Body:
     Script: |
       getitem 23143,5;
   - Id: 23148
-    AegisName: Premium_Box_2d
+    AegisName: Premium_Service_Box_2d
     Name: "[2Day] Premium Subscription Box"
     Type: Usable
     Weight: 10
@@ -61324,7 +61324,7 @@ Body:
 #   Script: |
 #     /* TODO */
   - Id: 23149
-    AegisName: Premium_Box_3d
+    AegisName: Premium_Service_Box_3d
     Name: "[3Day] Premium Subscription Box"
     Type: Usable
     Weight: 10
@@ -61813,7 +61813,7 @@ Body:
     Script: |
       getgroupitem(IG_NEW_HAT_BOX2);
   - Id: 23207
-    AegisName: Premium_Box
+    AegisName: Premium_Service_Box
     Name: "[30Day] Premium Subscription Box"
     Type: Usable
     Weight: 10
@@ -61828,7 +61828,7 @@ Body:
     Script: |
       /* TODO */
   - Id: 23209
-    AegisName: Premium_Box_1d
+    AegisName: Premium_Service_Box_1d
     Name: "[1Day] Premium Subscription Box"
     Type: Usable
     Weight: 10
@@ -61843,7 +61843,7 @@ Body:
 #   Script: |
 #     /* TODO */
   - Id: 23210
-    AegisName: Premium_Box_4d
+    AegisName: Premium_Service_Box_4d
     Name: "[4Day] Premium Subscription Box"
     Type: Usable
     Weight: 10
@@ -61858,7 +61858,7 @@ Body:
 #   Script: |
 #     /* TODO */
   - Id: 23211
-    AegisName: Premium_Box_5d
+    AegisName: Premium_Service_Box_5d
     Name: "[5Day] Premium Subscription Box"
     Type: Usable
     Weight: 10
@@ -61873,7 +61873,7 @@ Body:
 #   Script: |
 #     /* TODO */
   - Id: 23212
-    AegisName: Premium_Box_6d
+    AegisName: Premium_Service_Box_6d
     Name: "[6Day] Premium Subscription Box"
     Type: Usable
     Weight: 10
@@ -61888,7 +61888,7 @@ Body:
 #   Script: |
 #     /* TODO */
   - Id: 23213
-    AegisName: Premium_Box_5d7
+    AegisName: Premium_Service_Box_5d7
     Name: "[7Day] Premium Subscription Box"
     Type: Usable
     Weight: 10
@@ -61903,7 +61903,7 @@ Body:
     Script: |
       /* TODO */
   - Id: 23214
-    AegisName: Premium_Box_8d
+    AegisName: Premium_Service_Box_8d
     Name: "[8Day] Premium Subscription Box"
     Type: Usable
     Weight: 10
@@ -61918,7 +61918,7 @@ Body:
 #   Script: |
 #     /* TODO */
   - Id: 23215
-    AegisName: Premium_Box_9d
+    AegisName: Premium_Service_Box_9d
     Name: "[9Day] Premium Subscription Box"
     Type: Usable
     Weight: 10
@@ -61933,7 +61933,7 @@ Body:
 #   Script: |
 #     /* TODO */
   - Id: 23216
-    AegisName: Premium_Box_10d
+    AegisName: Premium_Service_Box_10d
     Name: "[10Day] Premium Subscription"
     Type: Usable
     Weight: 10
@@ -64463,7 +64463,7 @@ Body:
     Script: |
       getgroupitem(IG_Enchant_Stone_Box14);
   - Id: 23647
-    AegisName: Zero_Merchant_Bell
+    AegisName: Merchant_Bell
     Name: Tool Dealer Bell
     Type: Usable
     Trade:
@@ -64478,7 +64478,7 @@ Body:
     Script: |
       /* TODO dynamic npc */
   - Id: 23648
-    AegisName: Zero_Kafra_Bell
+    AegisName: Kafra_Bell
     Name: Kafra Storage Bell
     Type: Usable
     Trade:

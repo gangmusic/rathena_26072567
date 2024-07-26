@@ -51135,14 +51135,14 @@ Body:
       - SubGroup: 0
         List:
           - Index: 0
-            Item: Zero_Merchant_Bell
+            Item: Merchant_Bell
             Duration: 43200
   - Group: ZERO_KAFRA_BELL_BOX
     SubGroups:
       - SubGroup: 0
         List:
           - Index: 0
-            Item: Zero_Kafra_Bell
+            Item: Kafra_Bell
             Duration: 43200
   - Group: REFINE_ORE_BOX18
     SubGroups:
@@ -62646,7 +62646,7 @@ Body:
       - SubGroup: 0
         List:
           - Index: 0
-            Item: Premium_Box
+            Item: Premium_Service_Box
   - Group: COMP_BOX
     SubGroups:
       - SubGroup: 0
@@ -63420,7 +63420,7 @@ Body:
       - SubGroup: 0
         List:
           - Index: 0
-            Item: Premium_Box_5d7
+            Item: Premium_Service_Box_5d7
           - Index: 1
             Item: World_Tour_Ticket
             Amount: 10
@@ -91892,7 +91892,7 @@ Body:
             Item: EXP_Drop_Up_7days
             Amount: 4
           - Index: 1
-            Item: Premium_Box
+            Item: Premium_Service_Box
           - Index: 2
             Item: Nyangvine_Fruit
             Amount: 106
@@ -93142,7 +93142,7 @@ Body:
             Item: Nyangvine_Fruit
             Amount: 6
           - Index: 1
-            Item: Premium_Box
+            Item: Premium_Service_Box
           - Index: 2
             Item: EXP_Drop_Up_7days
           - Index: 3
@@ -109908,7 +109908,7 @@ Body:
           - Index: 0
             Item: Sonic_Costume_Pack
           - Index: 1
-            Item: Premium_Box
+            Item: Premium_Service_Box
           - Index: 2
             Item: EXP_Drop_Up_7days
           - Index: 3
@@ -111843,7 +111843,7 @@ Body:
       - SubGroup: 0
         List:
           - Index: 0
-            Item: Premium_Box
+            Item: Premium_Service_Box
   - Group: INVENTORY_EX_BOX
     SubGroups:
       - SubGroup: 0
