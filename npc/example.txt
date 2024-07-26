@@ -1,0 +1,36 @@
+-- Logs --
+- Rework สำหรับ emu 2024-07 hash : 4b32621c61bfce397488e27b4eb962b7c04a9c6f
+
+-- End of Logs --
+
+-- วิธีการใช้งาน --
+
+สามารถใช้งานคำสั่ง @vip (at command)
+หรือ vip_time(); ของ script npc
+
+---------------
+
+efstids.lub
+
+	EFST_VIPSTATUS = 1801,
+
+stateiconimginfo.lub
+
+	[EFST_IDs.EFST_VIPSTATUS] = "vip.TGA",
+
+stateiconinfo.lub
+
+	StateIconList[EFST_IDs.EFST_VIPSTATUS] = {
+	haveTimeLimit = 1,
+	posTimeLimitStr = 2,
+	descript = {
+		{ "VIP Status", COLOR_TITLE_BUFF },
+		{ "%s", COLOR_TIME },
+		{ "<คำอธิบาย>" }
+	}
+}
+
+-- สามารถ รีโหลด vip_bonus.yml ได้ด้วย @reloadstatusdb --
+
+สามารถกำหนดไม่ให้เข้าตัวละคร ในช่องของ VIP หมด เมื่อ VIP หมดอายุ
+ได้ใน conf/battle/misc.conf

@@ -11349,6 +11349,9 @@
 	export_constant(SEARCHSTORE_EFFECT_NORMAL);
 	export_constant(SEARCHSTORE_EFFECT_REMOTE);
 
+	export_constant(SC_VIPSTATUS);
+	export_constant(EFST_VIPSTATUS);
+
 	#undef export_constant
 	#undef export_constant2
 	#undef export_parameter

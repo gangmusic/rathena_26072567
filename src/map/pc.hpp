@@ -456,6 +456,7 @@ public:
 		bool roulette_open;
 		t_itemid item_reform;
 		uint64 item_enchant_index;
+		bool recal_vip_time;
 	} state;
 	struct {
 		unsigned char no_weapon_damage, no_magic_damage, no_misc_damage;
@@ -942,6 +943,7 @@ public:
 	s_macro_detect macro_detect;
 
 	std::vector<uint32> party_booking_requests;
+	int vip_timer_tid;
 };
 
 extern struct eri *pc_sc_display_ers; /// Player's SC display table

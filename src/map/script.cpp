@@ -23467,6 +23467,8 @@ BUILDIN_FUNC(vip_time) {
 		return SCRIPT_CMD_FAILURE;
 
 	chrif_req_login_operation(sd->status.account_id, sd->status.name, CHRIF_OP_LOGIN_VIP, viptime, 7, 0); 
+	sd->state.recal_vip_time = true;
+	add_timer(gettick() + 300, vip_bonus_timer, sd->bl.id, 0);
 #endif
 	return SCRIPT_CMD_SUCCESS;
 }

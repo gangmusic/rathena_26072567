@@ -10641,6 +10641,13 @@ void clif_parse_WantToConnection(int fd, map_session_data* sd)
 		return;
 	}
 
+	if(battle_config.vip_char_expired){
+		if(!check_vip_state(account_id,char_id)){
+			clif_authfail_fd(fd, 10);
+			return;
+		}
+	}
+
 	CREATE(sd, TBL_PC, 1);
 	new(sd) map_session_data();
 	sd->fd = fd;

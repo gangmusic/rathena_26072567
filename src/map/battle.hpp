@@ -763,6 +763,8 @@ struct Battle_Config
 	int synchronize_damage;
 	int item_stacking;
 
+	int vip_char_expired;
+
 #include <custom/battle_config_struct.inc>
 };
 

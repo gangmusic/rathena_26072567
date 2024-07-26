@@ -3788,6 +3788,8 @@ int status_calc_pc_sub(map_session_data* sd, uint8 opt)
 		pet_delautobonus(*sd, sd->pd->autobonus3, true);
 	}
 
+	vip_bonus(sd);
+
 	// Parse equipment
 	for (i = 0; i < EQI_MAX; i++) {
 		current_equip_item_index = index = sd->equip_index[i]; // We pass INDEX to current_equip_item_index - for EQUIP_SCRIPT (new cards solution) [Lupus]
@@ -16064,6 +16066,208 @@ void StatusDatabase::loadingFinished(){
 
 StatusDatabase status_db;
 
+const std::string VipBonusDatabase::getDefaultLocation() {
+	return std::string(db_path) + "/custom/vip_bonus.yml";
+}
+
+/**
+ */
+uint64 VipBonusDatabase::parseBodyNode(const ryml::NodeRef& node) {
+
+	if (!this->nodesExist(node, { "Id" }))
+		return 0;
+
+		uint16 Id;
+
+	if (!this->asUInt16(node, "Id", Id))
+		return 0;
+
+	std::shared_ptr<s_vip_bonus> VipBonus = this->find(Id);
+	bool exists = VipBonus != nullptr;
+
+	if (!exists) {
+		if (!this->nodesExist(node, { "Id" }))
+			return 0;
+
+		VipBonus = std::make_shared<s_vip_bonus>();
+		VipBonus->id = Id;
+	}
+
+    if (this->nodeExists(node, "Script")) {
+		std::string script;
+
+		if (!this->asString(node, "Script", script))
+			return 0;
+
+		if (exists && VipBonus->script) {
+			script_free_code(VipBonus->script);
+			VipBonus->script = nullptr;
+		}
+
+		VipBonus->script = parse_script(script.c_str(), this->getCurrentFile().c_str(), this->getLineNumber(node["Script"]), SCRIPT_IGNORE_EXTERNAL_BRACKETS);
+	} else {
+		if (!exists)
+			VipBonus->script = nullptr;
+	}
+
+	if( !exists ){
+		this->put( VipBonus->id , VipBonus );
+	}
+	return 1;
+}
+
+VipBonusDatabase vip_bonus_db;
+
+bool check_vip_state(int account_id, int char_id){
+
+	int group_id = -1;
+	time_t vip_time = 0;
+	int char_slot = -1;
+
+	// login table
+	if (Sql_Query(mmysql_handle,"SELECT `group_id`,`vip_time` FROM `login` WHERE `account_id` = %d",
+		account_id ) != SQL_SUCCESS ){
+		Sql_ShowDebug(mmysql_handle);
+		return false;
+	}
+
+	if(Sql_NumRows(mmysql_handle)){
+		while (SQL_SUCCESS == Sql_NextRow(mmysql_handle)) {
+			char* data;
+			Sql_GetData(mmysql_handle, 0,  &data, NULL); group_id = atoi(data);
+			Sql_GetData(mmysql_handle, 1,  &data, NULL); vip_time = atoi(data);
+		}
+	}
+
+	Sql_FreeResult(mmysql_handle);
+
+	// char table
+	if (Sql_Query(mmysql_handle,"SELECT `char_num` FROM `char` WHERE `account_id` = %d AND `char_id` = %d",
+		account_id, char_id ) != SQL_SUCCESS ){
+		Sql_ShowDebug(mmysql_handle);
+		return false;
+	}
+
+	if(Sql_NumRows(mmysql_handle)){
+		while (SQL_SUCCESS == Sql_NextRow(mmysql_handle)) {
+			char* data;
+			Sql_GetData(mmysql_handle, 0,  &data, NULL); char_slot = atoi(data);
+		}
+	}
+
+	Sql_FreeResult(mmysql_handle);
+
+	if(group_id == 0){
+		if(char_slot > MIN_CHARS-1)
+			return false;
+	}
+
+	return true;
+}
+
+time_t vip_remain_time(map_session_data *sd)
+{
+	int64 remain_time = 0;
+
+	SqlStmt *check;
+	check = SqlStmt_Malloc(mmysql_handle);
+	int64 result = 0;
+
+	if (SQL_ERROR == SqlStmt_Prepare(check, "SELECT `vip_time` FROM `login` WHERE `account_id`= %d", sd->status.account_id) || SqlStmt_Execute(check)) {
+		SqlStmt_ShowDebug(check);
+		SqlStmt_Free(check);
+		return 0;
+	}
+
+	SqlStmt_BindColumn(check, 0, SQLDT_INT64, &result, 0, NULL, NULL);
+
+	while( SQL_SUCCESS == SqlStmt_NextRow(check) ) {
+		remain_time = result;
+	}
+
+	SqlStmt_Free(check);
+
+	return remain_time;
+}
+
+void vip_bonus(map_session_data *sd)
+{
+	if(sd == nullptr) return;
+
+	time_t remain_time = vip_remain_time(sd);
+	time_t current_time = time(NULL);
+
+	if (pc_isvip(sd)) {
+		if(remain_time > current_time && sd->state.recal_vip_time){
+
+			time_t new_tick = (remain_time - current_time)*1000 + 2000;
+			time_t timer_tick = gettick() + new_tick;
+			status_change_start(NULL, &sd->bl, SC_VIPSTATUS, 10000, 1, 0, 0, 0, new_tick, SCSTART_NOAVOID);
+
+			if(sd->vip_timer_tid != INVALID_TIMER)
+				delete_timer(sd->vip_timer_tid, vip_delete_timer);
+
+			sd->vip_timer_tid = add_timer(timer_tick, vip_delete_timer, sd->bl.id, 0);
+			sd->state.recal_vip_time = false;
+		}
+
+		// clean VIP buff
+		if(remain_time < current_time){
+			if(sd->vip_timer_tid != INVALID_TIMER)
+				delete_timer(sd->vip_timer_tid, vip_delete_timer);
+
+			sd->vip_timer_tid = INVALID_TIMER;
+			status_change_end(&sd->bl, SC_VIPSTATUS);
+			return;
+		}
+
+		std::shared_ptr<s_vip_bonus> vip_bonus = vip_bonus_db.find(1);
+		if (vip_bonus != nullptr && vip_bonus->script != nullptr)
+			run_script(vip_bonus->script, 0, sd->bl.id, 0);
+	}else{
+		status_change_end(&sd->bl, SC_VIPSTATUS);
+		sd->vip_timer_tid = INVALID_TIMER;
+	}
+}
+
+TIMER_FUNC(vip_bonus_timer)
+{
+	map_session_data *sd = map_id2sd(id);
+	if( sd == NULL )
+		return 1;
+
+	status_calc_pc(sd, SCO_NONE);
+	return 0;
+}
+
+TIMER_FUNC(vip_delete_timer)
+{
+	map_session_data *sd = map_id2sd(id);
+	if( sd == NULL )
+		return 1;
+
+	if(sd->vip_timer_tid){
+		delete_timer(sd->vip_timer_tid , vip_delete_timer);
+		sd->vip_timer_tid = INVALID_TIMER;
+	}
+
+	status_calc_pc(sd, SCO_NONE);
+	return 0;
+}
+
+void reapply_custom_bonus()
+{
+	struct s_mapiterator* iter;
+	map_session_data* sd;
+
+	iter = mapit_geteachpc();
+	for( sd = (map_session_data*)mapit_first(iter); mapit_exists(iter); sd = (map_session_data*)mapit_next(iter) ) {
+		status_calc_pc(sd,SCO_NONE);
+	}
+
+	mapit_free(iter);
+}
+
 /**
  * Sets defaults in tables and starts read db functions
  * sv_readdb reads the file, outputting the information line-by-line to
@@ -16110,13 +16314,16 @@ void status_readdb( bool reload ){
 		refine_db.reload();
 		status_db.reload();
 		enchantgrade_db.reload();
+		vip_bonus_db.reload();
 	}else{
 		size_fix_db.load();
 		refine_db.load();
 		status_db.load();
 		enchantgrade_db.load();
+		vip_bonus_db.load();
 	}
 	elemental_attribute_db.load();
+	reapply_custom_bonus();
 }
 
 /**
@@ -16143,4 +16350,5 @@ void do_final_status(void) {
 	refine_db.clear();
 	status_db.clear();
 	elemental_attribute_db.clear();
+	vip_bonus_db.clear();
 }

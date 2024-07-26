@@ -11530,6 +11530,8 @@ static const struct _battle_data {
 	{ "synchronize_damage",                 &battle_config.synchronize_damage,              0,      0,      1,              },
 	{ "item_stacking",                      &battle_config.item_stacking,                   1,      0,      1,              },
 
+	{ "vip_char_expired",					&battle_config.vip_char_expired,               	1,      0,      1,              },
+
 #include <custom/battle_config_init.inc>
 };
 
