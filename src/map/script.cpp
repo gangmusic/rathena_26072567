@@ -10839,6 +10839,12 @@ BUILDIN_FUNC(openstorage)
 
 	if( !script_rid2sd(sd) )
 		return SCRIPT_CMD_SUCCESS;
+	sd->storage.max_amount = MIN_STORAGE;
+
+	sd->storage.max_amount += sd->bonus.addstoreitemcount;
+
+	if(sd->sc.getSCE(SC_AID_PERIOD_ADDSTOREITEMCOUNT))
+		sd->storage.max_amount += sd->sc.getSCE(SC_AID_PERIOD_ADDSTOREITEMCOUNT)->val1;
 
 	storage_storageopen(sd);
 	return SCRIPT_CMD_SUCCESS;

@@ -2544,7 +2544,7 @@ void mob_damage(struct mob_data *md, struct block_list *src, int damage)
  * @param drop_modifier: RENEWAL_DROP level modifier
  * @return Modified drop rate
  */
-int mob_getdroprate(struct block_list *src, std::shared_ptr<s_mob_db> mob, int base_rate, int drop_modifier, mob_data* md)
+int mob_getdroprate(struct block_list *src, std::shared_ptr<s_mob_db> mob, int base_rate, int drop_modifier, t_itemid nameid, bool is_real, mob_data* md)
 {
 	int drop_rate = base_rate;
 
@@ -2555,6 +2555,8 @@ int mob_getdroprate(struct block_list *src, std::shared_ptr<s_mob_db> mob, int b
 		else if (mob_size == SZ_BIG)
 			drop_rate *= 2;
 	}
+
+	std::shared_ptr<item_data> id = item_db.find(nameid);
 
 	if (src) {
 		if (battle_config.drops_by_luk) // Drops affected by luk as a fixed increase [Valaris]
@@ -2579,6 +2581,56 @@ int mob_getdroprate(struct block_list *src, std::shared_ptr<s_mob_db> mob, int b
 				drop_rate_bonus += sd->sc.getSCE(SC_ITEMBOOST)->val1;
 			if (sd->sc.getSCE(SC_PERIOD_RECEIVEITEM_2ND))
 				drop_rate_bonus += sd->sc.getSCE(SC_PERIOD_RECEIVEITEM_2ND)->val1;
+
+			if(is_real){
+				if( sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_ETC) && id->type == IT_ETC )
+					drop_rate_bonus += sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_ETC)->val2;
+
+				if( sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_USABLE) && (id->type == IT_USABLE || id->type == IT_HEALING) )
+					drop_rate_bonus += sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_USABLE)->val2;
+
+				if( sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_EQUIP) && (id->type == IT_ARMOR || id->type == IT_WEAPON) )
+					drop_rate_bonus += sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_EQUIP)->val2;
+
+				if( sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_CARD) && id->type == IT_CARD )
+					drop_rate_bonus += sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_CARD)->val2;
+
+				if( sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_2ND_ETC) && id->type == IT_ETC )
+					drop_rate_bonus += sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_2ND_ETC)->val2;
+
+				if( sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_2ND_USABLE) && (id->type == IT_USABLE || id->type == IT_HEALING) )
+					drop_rate_bonus += sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_2ND_USABLE)->val2;
+
+				if( sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_2ND_EQUIP) && (id->type == IT_ARMOR || id->type == IT_WEAPON) )
+					drop_rate_bonus += sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_2ND_EQUIP)->val2;
+
+				if( sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_2ND_CARD) && id->type == IT_CARD )
+					drop_rate_bonus += sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_2ND_CARD)->val2;
+			}else{
+				if( sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_ETC) && id->type == IT_ETC )
+					drop_rate_bonus += sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_ETC)->val1;
+
+				if( sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_USABLE) && (id->type == IT_USABLE || id->type == IT_HEALING) )
+					drop_rate_bonus += sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_USABLE)->val1;
+
+				if( sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_EQUIP) && (id->type == IT_ARMOR || id->type == IT_WEAPON) )
+					drop_rate_bonus += sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_EQUIP)->val1;
+
+				if( sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_CARD) && id->type == IT_CARD )
+					drop_rate_bonus += sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_CARD)->val1;
+
+				if( sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_2ND_ETC) && id->type == IT_ETC )
+					drop_rate_bonus += sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_2ND_ETC)->val1;
+
+				if( sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_2ND_USABLE) && (id->type == IT_USABLE || id->type == IT_HEALING) )
+					drop_rate_bonus += sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_2ND_USABLE)->val1;
+
+				if( sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_2ND_EQUIP) && (id->type == IT_ARMOR || id->type == IT_WEAPON) )
+					drop_rate_bonus += sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_2ND_EQUIP)->val1;
+
+				if( sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_2ND_CARD) && id->type == IT_CARD )
+					drop_rate_bonus += sd->sc.getSCE(SC_AID_PERIOD_RECEIVEITEM_2ND_CARD)->val1;
+			}
 
 			int cap;
 
@@ -2895,7 +2947,7 @@ int mob_dead(struct mob_data *md, struct block_list *src, int type)
 		(md->special_state.ai==AI_SPHERE && battle_config.alchemist_summon_reward == 1) //Marine Sphere Drops items.
 		) )
 	{ // Item Drop
-		int drop_rate, drop_modifier = 100;
+		int drop_rate,fake_drop_rate, drop_modifier = 100;
 
 #ifdef RENEWAL_DROP
 		drop_modifier = pc_level_penalty_mod( mvp_sd != nullptr ? mvp_sd : second_sd != nullptr ? second_sd : third_sd, PENALTY_DROP, nullptr, md );
@@ -2974,7 +3026,8 @@ int mob_dead(struct mob_data *md, struct block_list *src, int type)
 			if (it == nullptr)
 				continue;
 
-			drop_rate = mob_getdroprate(src, md->db, md->db->dropitem[i].rate, drop_modifier, md);
+			drop_rate = mob_getdroprate(src, md->db, md->db->dropitem[i].rate, drop_modifier, md->db->dropitem[i].nameid , true, md);
+			fake_drop_rate = mob_getdroprate(src, md->db, md->db->dropitem[i].rate, drop_modifier, md->db->dropitem[i].nameid , false, md);
 
 			// attempt to drop the item
 			if (rnd() % 10000 >= drop_rate)
@@ -2990,7 +3043,7 @@ int mob_dead(struct mob_data *md, struct block_list *src, int type)
 			//A Rare Drop Global Announce by Lupus
 			if (mvp_sd && md->db->dropitem[i].rate <= battle_config.rare_drop_announce) {
 				char message[128];
-				sprintf(message, msg_txt(nullptr, 541), mvp_sd->status.name, md->name, it->ename.c_str(), (float)drop_rate / 100);
+				sprintf(message, msg_txt(nullptr, 541), mvp_sd->status.name, md->name, it->ename.c_str(), (float)fake_drop_rate / 100);
 				//MSG: "'%s' won %s's %s (chance: %0.02f%%)"
 				intif_broadcast(message, strlen(message) + 1, BC_DEFAULT);
 			}

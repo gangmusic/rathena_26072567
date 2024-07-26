@@ -7855,7 +7855,7 @@ ACMD_FUNC(mobinfo)
 			if (id == nullptr)
 				continue;
 
-			int droprate = mob_getdroprate( &sd->bl, mob, mob->dropitem[i].rate, drop_modifier );
+			int droprate = mob_getdroprate( &sd->bl, mob, mob->dropitem[i].rate, drop_modifier, mob->dropitem[i].nameid, false);
 
 			sprintf(atcmd_output2, " - %s  %02.02f%%", item_db.create_item_link( id ).c_str(), (float)droprate / 100);
 			strcat(atcmd_output, atcmd_output2);

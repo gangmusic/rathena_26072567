@@ -4381,6 +4381,9 @@ void pc_bonus(map_session_data *sd,int type,int val)
 			if(sd->state.lr_flag != 2)
 				sd->bonus.itemsphealrate2 += val;
 			break;
+		case SP_AID_PERIOD_ADDSTOREITEMCOUNT:
+			sd->bonus.addstoreitemcount += val;
+			break;
 		default:
 			if (current_equip_combo_pos > 0) {
 				ShowWarning("pc_bonus: unknown bonus type %d %d in a combo with item #%u\n", type, val, sd->inventory_data[pc_checkequip( sd, current_equip_combo_pos )]->nameid);
@@ -8256,6 +8259,12 @@ static void pc_calcexp(map_session_data *sd, t_exp *base_exp, t_exp *job_exp, st
 	if (sd->sc.getSCE(SC_PERIOD_PLUSEXP_2ND))
 		bonus += sd->sc.getSCE(SC_PERIOD_PLUSEXP_2ND)->val1;
 
+	if (sd->sc.getSCE(SC_AID_PERIOD_PLUSEXP))
+		bonus += sd->sc.getSCE(SC_AID_PERIOD_PLUSEXP)->val1;
+
+	if (sd->sc.getSCE(SC_AID_PERIOD_PLUSEXP_2ND))
+		bonus += sd->sc.getSCE(SC_AID_PERIOD_PLUSEXP_2ND)->val1;
+
 	if (*base_exp) {
 		t_exp exp = (t_exp)(*base_exp + ((double)*base_exp * ((bonus + vip_bonus_base) / 100.)));
 		*base_exp = cap_value(exp, 1, MAX_EXP);
@@ -9872,6 +9881,12 @@ int pc_dead(map_session_data *sd,struct block_list *src)
 				case 1: base_penalty = (t_exp) ( pc_nextbaseexp(sd) * ( base_penalty / 10000. ) ); break;
 				case 2: base_penalty = (t_exp) ( sd->status.base_exp * ( base_penalty / 10000. ) ); break;
 			}
+
+			t_exp a_base = 0;
+			a_base = base_penalty;
+			if (sd->sc.getSCE(SC_AID_PERIOD_DEADPENALTY))
+				base_penalty -= (uint32)(a_base * (sd->sc.getSCE(SC_AID_PERIOD_DEADPENALTY)->val1 / 100.));
+
 			if (base_penalty){ //recheck after altering to speedup
 				if (battle_config.pk_mode && src && src->type==BL_PC)
 					base_penalty *= 2;
@@ -9886,6 +9901,12 @@ int pc_dead(map_session_data *sd,struct block_list *src)
 				case 1: job_penalty = (uint32) ( pc_nextjobexp(sd) * ( job_penalty / 10000. ) ); break;
 				case 2: job_penalty = (uint32) ( sd->status.job_exp * ( job_penalty /10000. ) ); break;
 			}
+
+			t_exp a_job = 0;
+			a_job = job_penalty;
+			if (sd->sc.getSCE(SC_AID_PERIOD_DEADPENALTY))
+				job_penalty -= (uint32)(a_job * (sd->sc.getSCE(SC_AID_PERIOD_DEADPENALTY)->val1 / 100.));
+
 			if (job_penalty) {
 				if (battle_config.pk_mode && src && src->type==BL_PC)
 					job_penalty *= 2;

@@ -1,0 +1,88 @@
+//= Function Script Premium Service By [SPY]
+//= 09/07/2024
+
+-	script	Premium_Service	-1,{
+	end;
+
+OnPCLoginEvent:
+	//= PREMIUM SERVICE END & START
+	if(#PREMIUM_SERVICE_TIME > gettimetick(2)){
+		sc_end SC_AID_PERIOD_ADDSTOREITEMCOUNT;
+		sc_end SC_AID_PERIOD_PLUSEXP_2ND;
+		sc_end SC_AID_PERIOD_RECEIVEITEM_2ND_ETC;
+		sc_end SC_AID_PERIOD_RECEIVEITEM_2ND_USABLE;
+		sc_end SC_AID_PERIOD_RECEIVEITEM_2ND_EQUIP;
+		sc_end SC_AID_PERIOD_RECEIVEITEM_2ND_CARD;
+		sc_start SC_AID_PERIOD_ADDSTOREITEMCOUNT,((#PREMIUM_SERVICE_TIME-gettimetick(2))*1000),300;
+		sc_start SC_AID_PERIOD_PLUSEXP_2ND,((#PREMIUM_SERVICE_TIME-gettimetick(2))*1000),20;
+
+		//= ,30,30; 30 ตัวหน้า คือ โชว์ @mi 30 ตัวหลัง คือ Drop จริงๆ
+		sc_start2 SC_AID_PERIOD_RECEIVEITEM_2ND_ETC,((#PREMIUM_SERVICE_TIME-gettimetick(2))*1000),30,30;
+		sc_start2 SC_AID_PERIOD_RECEIVEITEM_2ND_USABLE,((#PREMIUM_SERVICE_TIME-gettimetick(2))*1000),30,30;
+		sc_start2 SC_AID_PERIOD_RECEIVEITEM_2ND_EQUIP,((#PREMIUM_SERVICE_TIME-gettimetick(2))*1000),30,30;
+		//= ถ้าจะไม่ให้เพิ่มอัตราดรอป CARD ให้ลบ SC_AID_PERIOD_RECEIVEITEM_CARD ทิ้ง ห้ามใส่ 0
+		sc_start2 SC_AID_PERIOD_RECEIVEITEM_2ND_CARD,((#PREMIUM_SERVICE_TIME-gettimetick(2))*1000),30,30;
+	}
+
+	//= PREMIUM SERVICE END
+	if(#PREMIUM_SERVICE_TIME <= gettimetick(2)){
+		sc_end SC_AID_PERIOD_ADDSTOREITEMCOUNT;
+		sc_end SC_AID_PERIOD_PLUSEXP_2ND;
+		sc_end SC_AID_PERIOD_RECEIVEITEM_2ND_ETC;
+		sc_end SC_AID_PERIOD_RECEIVEITEM_2ND_USABLE;
+		sc_end SC_AID_PERIOD_RECEIVEITEM_2ND_EQUIP;
+		sc_end SC_AID_PERIOD_RECEIVEITEM_2ND_CARD;
+	}
+
+	//= EXP END & START
+	if(#PREMIUM_SERVICE_EXP > gettimetick(2)){
+		sc_end SC_AID_PERIOD_PLUSEXP;
+		sc_start SC_AID_PERIOD_PLUSEXP,((#PREMIUM_SERVICE_EXP-gettimetick(2))*1000),30;
+	}
+
+	//= EXP END
+	if(#PREMIUM_SERVICE_EXP <= gettimetick(2)){
+		sc_end SC_AID_PERIOD_PLUSEXP;
+	}
+
+	//= DROP ITEM END & START
+	if(#PREMIUM_SERVICE_ITEM > gettimetick(2)){
+		sc_end SC_AID_PERIOD_RECEIVEITEM_ETC;
+		sc_end SC_AID_PERIOD_RECEIVEITEM_USABLE;
+		sc_end SC_AID_PERIOD_RECEIVEITEM_EQUIP;
+		sc_end SC_AID_PERIOD_RECEIVEITEM_CARD;
+
+		//= ,30,30; 30 ตัวหน้า คือ โชว์ @mi 30 ตัวหลัง คือ Drop จริงๆ
+		sc_start2 SC_AID_PERIOD_RECEIVEITEM_ETC,((#PREMIUM_SERVICE_ITEM-gettimetick(2))*1000),30,30;
+		sc_start2 SC_AID_PERIOD_RECEIVEITEM_USABLE,((#PREMIUM_SERVICE_ITEM-gettimetick(2))*1000),30,30;
+		sc_start2 SC_AID_PERIOD_RECEIVEITEM_EQUIP,((#PREMIUM_SERVICE_ITEM-gettimetick(2))*1000),30,30;
+		//= ถ้าจะไม่ให้เพิ่มอัตราดรอป CARD ให้ลบ SC_AID_PERIOD_RECEIVEITEM_CARD ทิ้ง ห้ามใส่ 0
+		sc_start2 SC_AID_PERIOD_RECEIVEITEM_CARD,((#PREMIUM_SERVICE_ITEM-gettimetick(2))*1000),30,30;
+	}
+
+	//= DROP ITEM END
+	if(#PREMIUM_SERVICE_ITEM <= gettimetick(2)){
+		sc_end SC_AID_PERIOD_RECEIVEITEM_ETC;
+		sc_end SC_AID_PERIOD_RECEIVEITEM_USABLE;
+		sc_end SC_AID_PERIOD_RECEIVEITEM_EQUIP;
+		sc_end SC_AID_PERIOD_RECEIVEITEM_CARD;
+	}
+
+	//= DEADPENALTY END & START
+	if(#PREMIUM_SERVICE_DEAD > gettimetick(2)){
+		sc_end SC_AID_PERIOD_DEADPENALTY;
+		sc_start SC_AID_PERIOD_DEADPENALTY,((#PREMIUM_SERVICE_DEAD-gettimetick(2))*1000),50;
+	}
+
+	//= DEADPENALTY END
+	if(#PREMIUM_SERVICE_DEAD <= gettimetick(2)){
+		sc_end SC_AID_PERIOD_DEADPENALTY;
+	}
+	end;
+}
+
+//= PREMIUM SERVICE CHECK
+function	script	Premium_Service_Check	{
+    dispbottom "มีเอฟเฟกต์ซ้อนทับกันอยู่ ไม่สามารถใช้งานได้",0xFFFFFF;
+	end;
+}
