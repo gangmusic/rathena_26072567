@@ -10839,6 +10839,7 @@ BUILDIN_FUNC(openstorage)
 
 	if( !script_rid2sd(sd) )
 		return SCRIPT_CMD_SUCCESS;
+
 	sd->storage.max_amount = MIN_STORAGE;
 
 	sd->storage.max_amount += sd->bonus.addstoreitemcount;
