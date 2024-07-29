@@ -10842,6 +10842,10 @@ BUILDIN_FUNC(openstorage)
 
 	sd->storage.max_amount = MIN_STORAGE;
 
+	if (sd->vip.enabled) {
+        sd->storage.max_amount = battle_config.vip_storage_increase + MIN_STORAGE;
+    }
+
 	sd->storage.max_amount += sd->bonus.addstoreitemcount;
 
 	if(sd->sc.getSCE(SC_AID_PERIOD_ADDSTOREITEMCOUNT))
