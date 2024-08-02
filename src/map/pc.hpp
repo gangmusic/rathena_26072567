@@ -374,6 +374,12 @@ struct s_qi_display {
 	e_questinfo_markcolor color;
 };
 
+struct s_emote_data {
+	uint32 id;
+	uint32 expire_time;
+	uint8 type; 
+};
+
 class map_session_data {
 public:
 	struct block_list bl;
@@ -829,6 +835,8 @@ public:
 	// Battlegrounds queue system [MasterOfMuppets]
 	int bg_id, bg_queue_id;
 	int tid_queue_active; ///< Timer ID associated with players joining an active BG
+
+	std::vector<s_emote_data> emotes;
 
 #ifdef SECURE_NPCTIMEOUT
 	/**

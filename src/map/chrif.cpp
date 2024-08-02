@@ -19,6 +19,7 @@
 #include "clan.hpp"
 #include "clif.hpp"
 #include "elemental.hpp"
+#include "emote.hpp"
 #include "guild.hpp"
 #include "homunculus.hpp"
 #include "instance.hpp"
@@ -339,6 +340,8 @@ int chrif_save(map_session_data *sd, int flag) {
 		intif_quest_save(sd);
 	if (sd->achievement_data.save)
 		intif_achievement_save(sd);
+
+	emote_save(sd);
 
 	return 0;
 }

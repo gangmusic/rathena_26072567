@@ -2317,6 +2317,16 @@
 	parseable_packet( HEADER_CZ_USE_PACKAGEITEM, sizeof( struct PACKET_CZ_USE_PACKAGEITEM ), clif_parse_itempackage_select, 0 );
 #endif
 
+#if PACKETVER_RE_NUM >= 20230802 || PACKETVER_MAIN_NUM >= 20230802
+	parseable_packet( HEADER_CZ_SEND_EMOTE, sizeof( PACKET_CZ_SEND_EMOTE ), clif_parse_receive_emote, 0 );
+	packet( HEADER_ZC_RECEIVE_EMOTE, sizeof( PACKET_ZC_RECEIVE_EMOTE ) );
+	packet( HEADER_ZC_ADDTOBUYLIST_EMOTE, sizeof( PACKET_ZC_ADDTOBUYLIST_EMOTE ) );
+	parseable_packet( HEADER_CZ_BUY_PACK_EMOTE, sizeof( PACKET_CZ_BUY_PACK_EMOTE ), clif_parse_buypack_emote, 0 );
+	packet( HEADER_ZC_BUY_RESULT_EMOTE, sizeof( PACKET_ZC_BUY_RESULT_EMOTE ) );
+	packet( HEADER_ZC_MESSAGE_EMOTE, sizeof( PACKET_ZC_MESSAGE_EMOTE ) );
+	packet( HEADER_ZC_LIST_EMOTE, -1);
+#endif
+
 #if PACKETVER_MAIN_NUM >= 20220216 || PACKETVER_ZERO_NUM >= 20220203
 	parseable_packet( HEADER_CZ_RESET_SKILL, sizeof( struct PACKET_CZ_RESET_SKILL ), clif_parse_reset_skill, 0 );
 #endif

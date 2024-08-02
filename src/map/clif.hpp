@@ -49,6 +49,8 @@ struct s_laphine_upgrade;
 struct s_captcha_data;
 enum e_macro_detect_status : uint8;
 enum e_macro_report_status : uint8;
+enum e_emotemessage_result: uint8;
+enum e_emoteaddtobuylist_result: int8;
 enum e_hom_state2 : uint8;
 enum _sp;
 enum e_searchstore_failure : uint16;
@@ -1448,6 +1450,14 @@ void clif_macro_reporter_select(map_session_data &sd, const std::vector<uint32> 
 void clif_macro_reporter_status(map_session_data &sd, e_macro_report_status stype);
 
 void clif_dynamicnpc_result( map_session_data& sd, e_dynamicnpc_result result );
+
+//Emote
+void clif_parse_receive_emote( int fd, map_session_data* sd );
+void clif_receive_emote (map_session_data* sd, uint16 packId, uint16 emotionId );
+void clif_list_emote (map_session_data* sd);
+void clif_message_emote (map_session_data* sd, uint16 packId, enum e_emotemessage_result eresult );
+void clif_addtobuylist_emote (map_session_data* sd, uint16 packId, enum e_emoteaddtobuylist_result );
+int clif_addtobuylist_emote_sub(map_session_data *sd,va_list ap);
 
 void clif_set_dialog_align(map_session_data& sd, int npcid, e_say_dialog_align align);
 void clif_set_npc_window_size(map_session_data& sd, int width, int height);
